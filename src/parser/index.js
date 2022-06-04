@@ -2,10 +2,10 @@ const fs = require('fs').promises;
 
 const getAlbumsFromFile = async () => {
   try {
-    const data = (await fs.readFile('../assets/discography.txt')).toString().split('\n');
+    const data = (await fs.readFile('src/assets/discography.txt')).toString().split('\n');
     return data.filter((album) => album.trim() !== '');
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
   }
 };
 
@@ -44,7 +44,7 @@ const groupAlbumsByDecade = (albums) => {
     });
     return decades;
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
   }
 };
 
@@ -59,9 +59,15 @@ const sortAlbums = (decades) => {
 
 const sortDecades = (decades) => decades.sort((a, b) => a.value - b.value);
 
+const getDataForBoard = async () => {
+  const albums = await getAlbumsFromFile();
+  const albumsByDecade = groupAlbumsByDecade(albums);
+  const sortedDecades = sortDecades(albumsByDecade);
+  const sortedAlbums = sortAlbums(sortedDecades);
+
+  return sortedAlbums;
+};
+
 module.exports = {
-  getAlbumsFromFile,
-  groupAlbumsByDecade,
-  sortDecades,
-  sortAlbums,
+  getDataForBoard,
 };
