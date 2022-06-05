@@ -1,15 +1,24 @@
 const fs = require('fs').promises;
 
+const { getCoverArt, getToken: getSpotifyToken } = require('../spotify');
+
 const getAlbumsFromFile = async () => {
   try {
     const data = (await fs.readFile('src/assets/discography.txt')).toString().split('\n');
-    return data.filter((album) => album.trim() !== '');
+    const validData = data.filter((album) => album.trim() !== '');
+    const albums = validData.map((item) => {
+      const [year, ...rest] = item.split(' ');
+      const name = rest.join(' ');
+
+      return { year, name };
+    });
+    return albums;
   } catch (error) {
     console.log(error.message);
   }
 };
 
-const sortAlbumsByDate = (albums) =>
+const sortAlbumsByYear = (albums) =>
   albums.sort((a, b) => {
     const result = a.year - b.year;
     if (result === 0) {
@@ -19,53 +28,40 @@ const sortAlbumsByDate = (albums) =>
   });
 
 const groupAlbumsByDecade = (albums) => {
-  try {
-    const decades = [];
-    albums.forEach((item) => {
-      const [date, ...rest] = item.split(' ');
-      const albumName = rest.join(' ');
-      if (date.length > 0) {
-        const decadeValue = +`${date[0]}${date[1]}${date[2]}0`;
-        const decadeDisplayName = `${date[2]}0s`;
-        const newAlbum = { name: albumName, year: +date };
-        const decade = decades.find(({ value }) => value === decadeValue);
+  const decades = [];
+  albums.forEach(({ name, year, coverArt }) => {
+    const decadeValue = +`${year[0]}${year[1]}${year[2]}0`;
+    const decadeDisplayName = `${year[2]}0's`;
+    const album = { name, year, coverArt };
+    const foundDecade = decades.find((d) => d.value === decadeValue);
 
-        if (decade) {
-          decade.albums.push(newAlbum);
-        } else {
-          const newDecade = {
-            value: decadeValue,
-            displayName: decadeDisplayName,
-            albums: [newAlbum],
-          };
-          decades.push(newDecade);
-        }
-      }
-    });
-    return decades;
-  } catch (error) {
-    console.log(error.message);
-  }
-};
-
-const sortAlbums = (decades) => {
-  const sortedDecades = [];
-  decades.forEach((decade) => {
-    const sortedAlbums = sortAlbumsByDate(decade.albums);
-    sortedDecades.push({ ...decade, albums: sortedAlbums });
+    if (foundDecade) {
+      foundDecade.albums.push(album);
+    } else {
+      const newDecade = { value: decadeValue, displayName: decadeDisplayName, albums: [album] };
+      decades.push(newDecade);
+    }
   });
-  return sortedDecades;
+  return decades;
 };
 
-const sortDecades = (decades) => decades.sort((a, b) => a.value - b.value);
+const addCoverArt = async (albums) => {
+  const token = await getSpotifyToken();
+  const albumsWithCoverArt = await Promise.all(
+    albums.map(async (album) => {
+      const coverArt = await getCoverArt(album.name, token);
+      return { ...album, coverArt };
+    })
+  );
+  return albumsWithCoverArt;
+};
 
 const getDataForBoard = async () => {
   const albums = await getAlbumsFromFile();
-  const albumsByDecade = groupAlbumsByDecade(albums);
-  const sortedDecades = sortDecades(albumsByDecade);
-  const sortedAlbums = sortAlbums(sortedDecades);
-
-  return sortedAlbums;
+  const albumsWithCoverArt = await addCoverArt(albums);
+  const sortedAlbums = sortAlbumsByYear(albumsWithCoverArt);
+  const albumsByDecade = groupAlbumsByDecade(sortedAlbums);
+  return albumsByDecade;
 };
 
 module.exports = {
