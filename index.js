@@ -5,12 +5,13 @@ const { createBoard, addDataToBoard } = require('./src/trello');
 
 const buildBoard = async () => {
   try {
-    const boardId = await createBoard();
+    const { id: boardId, url } = await createBoard();
+    console.log(url);
     const boardData = await getDataForBoard();
 
     addDataToBoard(boardId, boardData);
   } catch (error) {
-    console.log(error.message);
+    console.log(error);
   }
 };
 
