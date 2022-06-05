@@ -1,6 +1,6 @@
 const fs = require('fs').promises;
 
-const { getCoverArt, getToken: getSpotifyToken } = require('../spotify');
+const { getCoverArt } = require('../spotify');
 
 const getAlbumsFromFile = async () => {
   try {
@@ -46,10 +46,9 @@ const groupAlbumsByDecade = (albums) => {
 };
 
 const addCoverArt = async (albums) => {
-  const token = await getSpotifyToken();
   const albumsWithCoverArt = await Promise.all(
     albums.map(async (album) => {
-      const coverArt = await getCoverArt(album.name, token);
+      const coverArt = await getCoverArt(album.name);
       return { ...album, coverArt };
     })
   );
