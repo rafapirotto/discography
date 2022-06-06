@@ -7,9 +7,9 @@ const spotifyApi = require('./src/spotify');
 
 const buildBoard = async () => {
   try {
-    const { id: boardId, url } = await createBoard();
-    console.log(url);
-    const boardData = await getDataForBoard(parserHelpers, spotifyApi);
+    const boardId = await createBoard();
+    const services = { parserHelpers, spotifyApi };
+    const boardData = await getDataForBoard(services);
 
     addDataToBoard(boardId, boardData);
   } catch (error) {

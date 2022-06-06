@@ -1,13 +1,13 @@
-require('dotenv').config();
-const { getDataForBoard } = require('../../parser');
-const helpers = require('../../parser/helpers');
-const { DEFAULT_COVER_ART_URL } = require('../../spotify/constants');
+const { getDataForBoard } = require('../parser');
+const helpers = require('../parser/helpers');
+
+const { DEFAULT_COVER_ART_URL } = require('../spotify/constants');
 const {
   parsedAlbums,
   albumsWithCoverArt,
   sortedAlbums: albumsSortedByYear,
   albumsByDecade: groupedAlbums,
-} = require('../fixtures');
+} = require('./fixtures');
 
 describe('Parser', () => {
   describe('helpers', () => {
@@ -76,17 +76,17 @@ describe('Parser', () => {
   describe('getDataForBoard', () => {
     test('should return the correct data for the board', async () => {
       // can also be done using 'mockImplementationOnce'
-      const parserMockedHelpers = {
+      const parserHelpers = {
         getAlbumsFromFile: () => [],
         addCoverArt: () => [],
         sortAlbumsByYear: () => [],
         groupAlbumsByDecade: () => groupedAlbums,
       };
-      const spotifyMockApi = {
+      const spotifyApi = {
         getCoverArt: () => DEFAULT_COVER_ART_URL,
       };
 
-      const dataForBoard = await getDataForBoard(parserMockedHelpers, spotifyMockApi);
+      const dataForBoard = await getDataForBoard({ parserHelpers, spotifyApi });
       const propertyExists = (obj, property) => obj[property] !== undefined;
       const dataForBoardWasObtainedCorrectly = dataForBoard.every(
         (decade) =>

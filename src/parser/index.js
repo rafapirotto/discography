@@ -1,5 +1,5 @@
 // dependency injection
-const getDataForBoard = async (parserHelpers, spotifyApi) => {
+const getDataForBoard = async ({ parserHelpers, spotifyApi }) => {
   const pathToFile = 'src/assets/discography.txt';
   const parsedAlbums = await parserHelpers.getAlbumsFromFile(pathToFile);
   const albumsWithCoverArt = await parserHelpers.addCoverArt(parsedAlbums, spotifyApi);

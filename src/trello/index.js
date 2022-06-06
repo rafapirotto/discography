@@ -12,7 +12,7 @@ const createBoard = async () => {
   const queryParams = new URLSearchParams(boardValues);
   const createBoardUrl = `${BASE_URL}/1/boards/?${AUTH_SECTION}&${queryParams}`;
   const { data } = await axios.post(createBoardUrl);
-  return { id: data?.id, url: data?.url };
+  return data?.id;
 };
 
 const createList = async (boardId, name) => {
