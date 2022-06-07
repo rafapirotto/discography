@@ -1,11 +1,7 @@
 const axios = require('axios');
 
-const { BOARD_NAME, BOARD_DESCRIPTION, BASE_URL } = require('./constants');
-const { getEnvVariable, retry } = require('../utils');
-
-const TRELLO_API_KEY = getEnvVariable('TRELLO_API_KEY');
-const TRELLO_TOKEN = getEnvVariable('TRELLO_TOKEN');
-const AUTH_SECTION = `key=${TRELLO_API_KEY}&token=${TRELLO_TOKEN}`;
+const { BOARD_NAME, BOARD_DESCRIPTION, BASE_URL, AUTH_SECTION } = require('./constants');
+const { retry } = require('../utils');
 
 const createBoard = async () => {
   const boardValues = { name: BOARD_NAME, defaultLists: false, desc: BOARD_DESCRIPTION };
@@ -36,6 +32,7 @@ const addCardToList = (cardName, listId, position, coverArt) => {
 };
 
 const addCardsToList = async (listId, albums) => {
+  // forEach is used over for of due to performance: https://leanylabs.com/blog/js-forEach-map-reduce-vs-for-for_of/
   albums.forEach((album, index) => {
     const { year, name, coverArt } = album;
     const cardName = `${year} - ${name}`;
@@ -46,6 +43,7 @@ const addCardsToList = async (listId, albums) => {
 
 const createLists = async (boardId, boardData) => {
   const lists = [];
+  // for of is used due to this: https://stackoverflow.com/questions/37576685/using-async-await-with-a-foreach-loop
   for (const decade of boardData) {
     const listId = await createList(boardId, decade.displayName);
     lists.push({ listId, albums: decade.albums });
@@ -55,6 +53,7 @@ const createLists = async (boardId, boardData) => {
 
 const addDataToBoard = async (boardId, boardData) => {
   const lists = await createLists(boardId, boardData);
+  // forEach is used over for of due to performance: https://leanylabs.com/blog/js-forEach-map-reduce-vs-for-for_of/
   lists.forEach(({ listId, albums }) => {
     addCardsToList(listId, albums);
   });
