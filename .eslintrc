@@ -6,7 +6,9 @@
     "consistent-return": "off",
     "no-restricted-syntax": "off",
     "no-plusplus": "off",
-    "no-await-in-loop": "off"
+    "no-await-in-loop": "off",
+    "new-cap": "off",
+    "no-console": "off"
   },
   "env": {
     "node": true,
