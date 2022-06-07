@@ -5,11 +5,12 @@
     "prettier/prettier": ["error"],
     "consistent-return": "off",
     "no-restricted-syntax": "off",
-    "no-plusplus":"off",
-    "no-await-in-loop":"off"
+    "no-plusplus": "off",
+    "no-await-in-loop": "off"
   },
   "env": {
-    "node": true
+    "node": true,
+    "jest":true
   },
   "parserOptions": {
     "ecmaVersion": 2020
