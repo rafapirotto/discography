@@ -4,6 +4,10 @@ const { BOARD_NAME, BOARD_DESCRIPTION, BASE_URL, AUTH_SECTION } = require('./con
 const { retry } = require('../utils');
 const logger = require('../logger');
 
+/**
+ * Creates a board and returns its id.
+ * @returns {string} - Id of the created board.
+ */
 const createBoard = async () => {
   logger.info('Creating board..');
   const boardValues = { name: BOARD_NAME, defaultLists: false, desc: BOARD_DESCRIPTION };
@@ -58,6 +62,11 @@ const createLists = async (boardId, boardData) => {
   return lists;
 };
 
+/**
+ * Adds 'boardData' to the board corresponding to the 'boardId'.
+ * @param {string} boardId - Id of the board we want to insert lists and cards to.
+ * @param {object} boardData - Data we want to insert to the board; lists and cards.
+ */
 const addDataToBoard = async (boardId, boardData) => {
   logger.info('Adding data to board...');
   const lists = await createLists(boardId, boardData);
