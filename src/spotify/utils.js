@@ -14,10 +14,14 @@ const createRequestOptions = (clientId, clientSecret) => {
   return { headers, params, method: 'post', url: TOKEN_URL, json: true };
 };
 
+/**
+ * Obtains the token needed to perform the requests to the Spotify API.
+ * @returns {string} - Token needed to perform the requests to the Spotify API.
+ */
 const getToken = async () => {
   const options = createRequestOptions(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET);
   const { data } = await axios(options);
   return data?.access_token;
 };
 
-module.exports = { createRequestOptions, getToken };
+module.exports = { getToken };
