@@ -1,10 +1,6 @@
 const axios = require('axios');
 
-const { TOKEN_URL } = require('./constants');
-const { getEnvVariable } = require('../utils');
-
-const SPOTIFY_CLIENT_ID = getEnvVariable('SPOTIFY_CLIENT_ID');
-const SPOTIFY_CLIENT_SECRET = getEnvVariable('SPOTIFY_CLIENT_SECRET');
+const { TOKEN_URL, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } = require('./constants');
 
 const createRequestOptions = (clientId, clientSecret) => {
   const auth = new Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
@@ -24,4 +20,4 @@ const getToken = async () => {
   return data?.access_token;
 };
 
-module.exports = { getToken };
+module.exports = { createRequestOptions, getToken };
