@@ -14,12 +14,8 @@ describe('utils', () => {
     describe('getEnvVariable: env variable does not exist', () => {
       test('it should throw an exception', async () => {
         const nonExistentVar = 'SOME_VAR_THAT_DOES_NOT_EXIST';
-        const errorMessage = `Declaration for ${nonExistentVar} is missing in the .env file.`;
-        const getEnvVariableFail = () => {
-          getEnvVariable(nonExistentVar);
-        };
-        expect(getEnvVariableFail).toThrow(Error);
-        expect(getEnvVariableFail).toThrow(errorMessage);
+        const value = getEnvVariable(nonExistentVar);
+        expect(value).toBe(undefined);
       });
     });
   });

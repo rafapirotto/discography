@@ -3,19 +3,26 @@ const axios = require('axios');
 const { BOARD_NAME, BOARD_DESCRIPTION, BASE_URL, AUTH_SECTION } = require('./constants');
 const { retry } = require('../utils');
 const logger = require('../logger');
+const BoardCreationLimit = require('../exceptions/BoardCreationLimitError');
 
 /**
  * Creates a board and returns its id.
  * @returns {string} - Id of the created board.
  */
 const createBoard = async () => {
-  logger.info('Creating board..');
+  logger.info('Creating board...');
   const boardValues = { name: BOARD_NAME, defaultLists: false, desc: BOARD_DESCRIPTION };
   const queryParams = new URLSearchParams(boardValues);
   const createBoardUrl = `${BASE_URL}/1/boards/?${AUTH_SECTION}&${queryParams}`;
-  const { data } = await axios.post(createBoardUrl);
-  logger.info(`Board link: ${data?.url}`);
-  return data?.id;
+  return axios
+    .post(createBoardUrl)
+    .then(({ data }) => {
+      logger.info(`Board link: ${data?.url}`);
+      return data?.id;
+    })
+    .catch(() => {
+      throw new BoardCreationLimit();
+    });
 };
 
 const createList = async (boardId, name) => {
@@ -44,11 +51,9 @@ const addCardsToList = async (listId, albums) => {
   albums.forEach((album, index) => {
     const { year, name, coverArt } = album;
     const cardName = `${year} - ${name}`;
-    // await is not needed since we use the index to insert in the correct order
-    retry(() => {
-      logger.warn(`There was an issue trying to add the '${name}' album, retrying...`);
-      return addCardToList(cardName, listId, index + 1, coverArt);
-    });
+    const callbackParams = { albumName: name };
+    const callback = () => addCardToList(cardName, listId, index + 1, coverArt);
+    retry(callback, callbackParams);
   });
 };
 
@@ -56,8 +61,14 @@ const createLists = async (boardId, boardData) => {
   const lists = [];
   // for of is used due to this: https://stackoverflow.com/questions/37576685/using-async-await-with-a-foreach-loop
   for (const decade of boardData) {
-    const listId = await createList(boardId, decade.displayName);
-    lists.push({ listId, albums: decade.albums });
+    try {
+      const listId = await createList(boardId, decade.displayName);
+      lists.push({ listId, albums: decade.albums });
+    } catch (error) {
+      logger.warn(
+        `The ${decade.displayName} list could not be created, hence cards referred to this list won't be added.`
+      );
+    }
   }
   return lists;
 };
