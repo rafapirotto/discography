@@ -2,6 +2,20 @@ const fs = require('fs').promises;
 
 const InvalidPath = require('../exceptions/InvalidPathError');
 const logger = require('../logger');
+
+const getParsedData = async (path) => {
+  const parsedData = (await fs.readFile(path)).toString().split('\n');
+  const validData = parsedData.filter((album) => album.trim() !== '');
+  return validData;
+};
+
+const buildAlbums = (parsedData) =>
+  parsedData.map((item) => {
+    const [year, ...rest] = item.split(' ');
+    const name = rest.join(' ');
+    return { year, name };
+  });
+
 /**
  * Parses a text file to an array of objects containing the year and name of each album.
  * @param {string} path - Path to the text file we want to parse.
@@ -10,14 +24,8 @@ const logger = require('../logger');
 const parseAlbumsFromFile = async (path) => {
   try {
     logger.info('Parsing albums...');
-    const data = (await fs.readFile(path)).toString().split('\n');
-    const validData = data.filter((album) => album.trim() !== '');
-    const albums = validData.map((item) => {
-      const [year, ...rest] = item.split(' ');
-      const name = rest.join(' ');
-
-      return { year, name };
-    });
+    const parsedData = await getParsedData(path);
+    const albums = buildAlbums(parsedData);
     return albums;
   } catch (error) {
     throw new InvalidPath();

@@ -2,15 +2,18 @@ const axios = require('axios');
 
 const { TOKEN_URL, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } = require('./constants');
 
-const createRequestOptions = (clientId, clientSecret) => {
+const buildHeaders = (clientId, clientSecret) => {
   const auth = new Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
-  const headers = {
-    Authorization: `Basic ${auth}`,
-    'Content-Type': 'application/x-www-form-urlencoded',
-  };
-  const params = {
-    grant_type: 'client_credentials',
-  };
+  return { Authorization: `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' };
+};
+
+const buildParams = () => ({
+  grant_type: 'client_credentials',
+});
+
+const createRequestOptions = (clientId, clientSecret) => {
+  const headers = buildHeaders(clientId, clientSecret);
+  const params = buildParams();
   return { headers, params, method: 'post', url: TOKEN_URL, json: true };
 };
 

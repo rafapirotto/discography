@@ -1,42 +1,15 @@
 require('dotenv').config();
-const fs = require('fs').promises;
 
-const trelloApi = require('./src/trello');
-const parser = require('./src/parser');
-const builder = require('./src/builder');
-const { addCoverArt } = require('./src/spotify');
-const spotifyApi = require('./src/spotify/api');
-const logger = require('./src/logger');
-const CustomError = require('./src/exceptions/CustomError');
-const { getEnvVariable } = require('./src/utils');
-const EnvVariableMissingError = require('./src/exceptions/EnvVariableMissingError');
+const trelloApi = require('./trello');
+const parser = require('./parser');
+const builder = require('./builder');
+const { addCoverArt } = require('./spotify');
+const spotifyApi = require('./spotify/api');
+const { handleError, checkIfEnvVariablesExist } = require('./utils');
 
-const handleError = (error) => {
-  if (error instanceof CustomError) {
-    logger.error(`${error.message}. Aborting...`);
-  } else {
-    logger.error('Unexpected error ocurred');
-  }
-};
-
-const checkForNecessaryEnvVariables = async (path) => {
-  logger.info('Loading env variables...');
-  const data = (await fs.readFile(path)).toString().split('\n');
-  data.forEach((item) => {
-    if (item) {
-      const key = item.split('=')[0];
-      const envVariable = getEnvVariable(key);
-      if (!envVariable) {
-        throw new EnvVariableMissingError(key);
-      }
-    }
-  });
-  logger.info('All env variables found');
-};
-
-const buildBoard = async (path) => {
+const runScript = async (path) => {
   try {
-    await checkForNecessaryEnvVariables('./.env.sample');
+    await checkIfEnvVariablesExist();
     const boardId = await trelloApi.createBoard();
     const parsedAlbums = await parser.parseAlbumsFromFile(path);
     const albumsWithCoverArt = await addCoverArt(parsedAlbums, spotifyApi);
@@ -47,4 +20,4 @@ const buildBoard = async (path) => {
   }
 };
 
-buildBoard('src/assets/discography.txt');
+runScript('assets/discography.txt');
