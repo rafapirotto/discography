@@ -6,7 +6,8 @@
   "scripts": {
     "test": "jest --silent",
     "coverage": "jest --coverage --silent",
-    "lint": "npx eslint ."
+    "lint": "npx eslint .",
+    "create-board": "node index.js"
   },
   "repository": {
     "type": "git",
