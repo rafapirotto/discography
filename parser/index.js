@@ -1,6 +1,6 @@
 const fs = require('fs').promises;
 
-const InvalidPath = require('../exceptions/InvalidPathError');
+const { InvalidPathError } = require('../exceptions');
 const logger = require('../logger');
 
 const getParsedData = async (path) => {
@@ -28,7 +28,7 @@ const parseAlbumsFromFile = async (path) => {
     const albums = buildAlbums(parsedData);
     return albums;
   } catch (error) {
-    throw new InvalidPath();
+    throw new InvalidPathError();
   }
 };
 

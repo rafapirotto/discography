@@ -1,10 +1,10 @@
 const fs = require('fs').promises;
 
 const logger = require('../logger');
-const EnvVariableMissingError = require('../exceptions/EnvVariableMissingError');
+const { EnvVariableMissingError } = require('../exceptions');
 const { getEnvVariable } = require('./getEnvVariable');
 
-const checkIfVariableExists = async (item) => {
+const checkIfVariableExists = (item) => {
   const key = item.split('=')[0];
   const envVariable = getEnvVariable(key);
   if (!envVariable) {

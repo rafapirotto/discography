@@ -4,8 +4,8 @@
   "description": "Trello board with entire Bob Dylan's discography",
   "main": "index.js",
   "scripts": {
-    "test": "jest --silent",
-    "coverage": "jest --coverage --silent",
+    "test": "jest --silent --verbose",
+    "coverage": "jest --coverage --silent --verbose",
     "lint": "npx eslint .",
     "create-board": "node index.js"
   },

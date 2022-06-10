@@ -1,6 +1,7 @@
 const helpers = require('../../builder/helpers');
-
+const { processDataForBoard } = require('../../builder');
 const { albumsWithCoverArt, sortedAlbums: albumsSortedByYear } = require('../fixtures');
+const { DataProcessingError } = require('../../exceptions');
 
 describe('builder', () => {
   describe('sortAlbumsByYear', () => {
@@ -34,6 +35,25 @@ describe('builder', () => {
           propertyExists(decade, 'albums')
       );
       expect(albumsWereGroupedCorrectly).toBe(true);
+    });
+  });
+  describe('processDataForBoard:success', () => {
+    test('it should process the board data correctly', async () => {
+      const albumsByDecade = await processDataForBoard(albumsWithCoverArt);
+      const propertyExists = (obj, property) => obj[property] !== undefined;
+      const albumsWereGroupedCorrectly = albumsByDecade.every(
+        (decade) =>
+          propertyExists(decade, 'value') &&
+          propertyExists(decade, 'displayName') &&
+          propertyExists(decade, 'albums')
+      );
+      expect(albumsWereGroupedCorrectly).toBe(true);
+    });
+  });
+
+  describe('processDataForBoard:error', () => {
+    test('it should throw a DataProcessingError exception', async () => {
+      expect(() => processDataForBoard(null)).rejects.toThrow(DataProcessingError);
     });
   });
 });
