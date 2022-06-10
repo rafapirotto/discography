@@ -2,7 +2,7 @@ const axios = require('axios');
 
 const { BOARD_NAME, BOARD_DESCRIPTION, BASE_URL, AUTH_SECTION } = require('./constants');
 const logger = require('../logger');
-const BoardCreationLimit = require('../exceptions/BoardCreationLimitError');
+const { BoardCreationLimit } = require('../exceptions');
 const { createLists } = require('./lists');
 const { addCardsToList } = require('./cards');
 
@@ -18,7 +18,7 @@ const buildUrl = (queryParams) => `${BASE_URL}/1/boards/?${AUTH_SECTION}&${query
  * Creates a board and returns its id.
  * @returns {string} - Id of the created board.
  */
-const createBoard = async () => {
+const createBoard = () => {
   logger.info('Creating board...');
   const queryParams = buildQueryParams();
   const createBoardUrl = buildUrl(queryParams);

@@ -10,7 +10,7 @@ const buildUrl = (albumName) => {
   return searchUrl;
 };
 
-const getRequestOptions = async (token) => {
+const getRequestOptions = (token) => {
   const options = {
     headers: {
       Authorization: `Bearer ${token}`,

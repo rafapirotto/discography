@@ -2,7 +2,7 @@ const logger = require('../logger');
 
 /**
  * Gets and adds the cover art for all of the albums.
- * @param {Array<Object>} albums - Albums we want to get their cover arts.
+ * @param {Array<Object>} albums - Albums we want to get their cover arts to.
  * @param {object} spotifyApi - Spotify API that includes the necessary functions to get the cover arts.
  * @returns {Array<Object>} - Albums with their cover arts.
  */

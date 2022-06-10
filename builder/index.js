@@ -1,4 +1,4 @@
-const DataProcessingError = require('../exceptions/DataProcessingError');
+const { DataProcessingError } = require('../exceptions');
 const logger = require('../logger');
 const { sortAlbumsByYear, groupAlbumsByDecade } = require('./helpers');
 
