@@ -16,6 +16,7 @@ The attached file (`discography.txt`) contains Bob Dylan’s discography. Our go
 3. [Screenshots](#screenshots)
 
 ## Instructions
+### Install dependencies and run script
 
 * Download [zip file](https://github.com/rafapirotto/discography/archive/main.zip) or [clone project](https://github.com/rafapirotto/discography/tree/main)
 
@@ -57,6 +58,6 @@ The trello related variables can be obtained [here](https://trello.com/app-key),
 
 ## Screenshots
 ### Logger
-![trello board](./src/assets/logger.png)
+![trello board](./assets/logger.png)
 ### Finished board
-![trello board](./src/assets/final-board.png)
+![trello board](./assets/final-board.png)

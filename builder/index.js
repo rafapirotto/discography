@@ -1,8 +1,12 @@
 const DataProcessingError = require('../exceptions/DataProcessingError');
 const logger = require('../logger');
-
 const { sortAlbumsByYear, groupAlbumsByDecade } = require('./helpers');
 
+/**
+ * Processes the data that will be sent to the board. If a problem occurs during execution, an exception will be thrown
+ * @param {Array<object>} albums - Albums to process.
+ * @returns {Array<object>} - Processed data for board.
+ */
 const processDataForBoard = async (albums) => {
   try {
     logger.info('Processing data for board...');
